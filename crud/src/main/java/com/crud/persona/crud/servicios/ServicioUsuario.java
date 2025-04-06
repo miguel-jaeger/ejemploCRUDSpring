@@ -29,4 +29,8 @@ public class ServicioUsuario {
     public void eliminarUsuario(ModeloUsuario usuario) {
          repositorioUsuario.deleteById(usuario.getIdPersona());
     }
+
+    public ModeloUsuario obtenerUsuarioPorId(Long id) {
+        return repositorioUsuario.findById(id).orElse(null);
+    }
 }
