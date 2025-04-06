@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/usuarios")
-public class ControladorUsuario {
+public class ControladorRestUsuario {
 
     @Autowired
     private ServicioUsuario servicioUsuario;
