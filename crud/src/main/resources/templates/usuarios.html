@@ -23,6 +23,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Apellido</th>
+                <th scope="col">Password</th>
                 <th scope="col">Email</th>
                 <th scope="col">Acciones</th>
             </thead>
@@ -31,12 +32,12 @@
              <tr th:each="usuario, iter:${usuarios}">
                 <td  th:text="${iter.index + 1}">1</td>
                 <td th:text="${usuario.nombre}"></td>
-                <td th:text="${usuario.apellido}"></td>
+                <td th:text="${usuario.apellido}"></td>                
+                <td th:text="${usuario.contrasena}"></td>
                 <td th:text="${usuario.correo}"></td>
                 <td>
-                    <a class="btn btn-primary">Editar</a>
-                    <a class="btn btn-danger">Eliminar</a>
-              </td>
+                    <a th:href="@{/usuarios/editar/{id}(idPersona=${usuario.idPersona})}"class="btn btn-primary">Editar</a>
+                    <a th:href="@{/usuarios/eliminar/{id}(idPersona=${usuario.idPersona})}" class="btn btn-danger">Eliminar</a>
               </tr>
             </tbody>
           </table>

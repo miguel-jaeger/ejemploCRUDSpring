@@ -2,8 +2,11 @@
     "java.compile.nullAnalysis.mode": "automatic",
     "cSpell.words": [
         "Controlador",
+        "editar",
+        "eliminar",
         "guardar",
         "modelo",
+        "repositorio",
         "servicio",
         "Usuario"
     ],
