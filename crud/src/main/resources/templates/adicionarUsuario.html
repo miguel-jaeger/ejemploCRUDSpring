@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar usuario</title>
+     <!-- Bootstrap CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Registro de Usuario</h2>
+        
+        <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post" class="row g-3">
+    
+            <div class="col-md-6">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" th:field="*{nombre}" class="form-control" id="nombre" placeholder="Ingresa tu nombre" required>
+            </div>
+    
+            <div class="col-md-6">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" th:field="*{apellido}" class="form-control" id="apellido" placeholder="Ingresa tu apellido" required>
+            </div>
+    
+            <div class="col-12">
+                <label for="correo" class="form-label">Correo electrónico</label>
+                <input type="email" th:field="*{correo}" class="form-control" id="correo" placeholder="usuario@ejemplo.com" required>
+            </div>
+    
+            <div class="col-12">
+                <label for="contrasena" class="form-label">Contraseña</label>
+                <input type="password" th:field="*{contrasena}" class="form-control" id="contrasena" placeholder="********" required>
+            </div>
+    
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
