@@ -21,6 +21,10 @@ public class ServicioUsuario {
 	}
 
 	public ModeloUsuario guardarUsuario(ModeloUsuario usuario) {
+		ModeloUsuario existente = repositorioUsuario.findByCorreo(usuario.getCorreo());
+	    if (existente!=null) {
+	        return null; // Ya existe el correo
+	    }
 
 		return repositorioUsuario.save(usuario);
 	}
