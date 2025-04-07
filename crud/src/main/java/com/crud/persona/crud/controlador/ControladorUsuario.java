@@ -1,5 +1,6 @@
 package com.crud.persona.crud.controlador;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +36,7 @@ public class ControladorUsuario<Usuario> {
     // Guardar usuario
    @PostMapping("usuarios/guardar")
    public String guardarUsuario(@ModelAttribute("usuario") ModeloUsuario usuario) {
+	   usuario.setContrasena(this.claveEncriptada(usuario.getContrasena()));
        servicioUsuario.guardarUsuario(usuario);
        return "redirect:/usuarios";
    }
@@ -69,6 +71,28 @@ public class ControladorUsuario<Usuario> {
        return "redirect:/usuarios";
    }
  
+   public String claveEncriptada(String clave) {
+	   return BCrypt.hashpw(clave, BCrypt.gensalt());
+   }
+
+   @GetMapping("usuarios/autenticar")
+   public String mostrarAutenticarUsuario(Model modelo) {
+       ModeloUsuario usuario = new ModeloUsuario();
+       modelo.addAttribute("usuario", usuario);
+       return "autenticarUsuario";
+   }
    
+   @PostMapping("usuarios/autenticarUsuario")
+   public String autenticarUsuario(@ModelAttribute("usuario") ModeloUsuario usuario) {
+       boolean valida = servicioUsuario.autenticarUsuario(usuario.getCorreo(), usuario.getContrasena());
+       String redirect = "autenticar404";
+       if(valida) redirect = "usuarios";
+       return "redirect:/"+redirect;
+   }
+   
+   @GetMapping("/autenticar404")
+   public String autenticarError(Model modelo) {
+       return "autenticar404";
+   }
 
 }

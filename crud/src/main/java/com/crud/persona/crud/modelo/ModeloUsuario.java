@@ -66,6 +66,12 @@ public class ModeloUsuario {
         this.contrasena = contrasena;
     }
 
+	@Override
+	public String toString() {
+		return "ModeloUsuario [idPersona=" + idPersona + ", nombre=" + nombre + ", apellido=" + apellido + ", correo="
+				+ correo + ", contrasena=" + contrasena + "]";
+	}
+
        
 
 
