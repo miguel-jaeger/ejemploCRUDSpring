@@ -1,4 +1,4 @@
-package com.tuempresa.tuprojecto.config;
+package com.crud.persona.crud.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
