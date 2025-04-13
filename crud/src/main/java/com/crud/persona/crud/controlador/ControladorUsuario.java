@@ -11,14 +11,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.crud.persona.crud.modelo.ModeloUsuario;
 import com.crud.persona.crud.servicios.ServicioUsuario;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
 public class ControladorUsuario<Usuario> {
     @Autowired
     private ServicioUsuario servicioUsuario;
-
+    // redirecciona al home de la app
+    @GetMapping("/")
+    public String redirectToUsuarios() {
+        return "redirect:/usuarios";
+    }
     // Listar
     @GetMapping("/usuarios")
     public String listarUsuarios(Model modelo) {
