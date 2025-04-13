@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Listado de Usuarios</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
   <div class="container mt-5">
@@ -28,23 +29,43 @@
 
           if ($usuarios && is_array($usuarios)) {
               foreach ($usuarios as $index => $usuario) {
-                  echo "<tr>";
-                  echo "<td>" . ($index + 1) . "</td>";
-                  echo "<td>" . htmlspecialchars($usuario['nombre']) . "</td>";
-                  echo "<td>" . htmlspecialchars($usuario['apellido']) . "</td>";
-                  echo "<td>" . htmlspecialchars($usuario['correo']) . "</td>";
-                  echo "<td>
-                          <button class='btn btn-warning btn-sm me-1' onclick='editarUsuario(" . htmlspecialchars(json_encode($usuario)) . ")'>Editar</button>
-                          <button class='btn btn-danger btn-sm' onclick='eliminarUsuario(" . $usuario['idPersona'] . ")'>Eliminar</button>
-                        </td>";
-                  echo "</tr>";
+                ?>
+                  <tr>
+                    <td><?php echo ($index + 1); ?></td>
+                    <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($usuario['apellido']); ?></td>
+                    <td><?php echo htmlspecialchars($usuario['correo']); ?></td>                  
+                    <td>
+                     <!-- <button class="btn btn-warning btn-sm me-1" onclick='editarUsuario(<?php echo htmlspecialchars(json_encode($usuario)); ?>)'>Editar</button>
+                      <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $usuario['idPersona']; ?>)">Eliminar</button>-->
+<!-- Los botones con iconos utilizando Bootstrap Icons -->
+<button class="btn btn-primary btn-sm me-1" onclick='editarUsuario(<?php echo htmlspecialchars(json_encode($usuario)); ?>)'>
+  <i class="bi bi-pencil-square"></i> Editar
+</button>
+<button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $usuario['idPersona']; ?>)">
+  <i class="bi bi-trash"></i> Eliminar
+</button>
+
+                    </td>
+                  </tr>
+                <?php
               }
           } else {
-              echo "<tr><td colspan='5'>No se encontraron usuarios.</td></tr>";
+        ?>
+          <tr><td colspan="5">No se encontraron usuarios.</td></tr>
+        <?php
           }
         ?>
       </tbody>
     </table>
+    
+    <!-- Panel para mensajes de debug -->
+    <div class="mt-4">
+      <div class="alert alert-info" id="requestDebug" style="display:none;">
+        <h5>Información de depuración</h5>
+        <pre id="requestData"></pre>
+      </div>
+    </div>
   </div>
 
   <!-- Modal -->
@@ -128,6 +149,11 @@
       }
     }
 
+    function mostrarDebug(data) {
+      document.getElementById('requestData').textContent = JSON.stringify(data, null, 2);
+      document.getElementById('requestDebug').style.display = 'block';
+    }
+
     function guardarUsuario(e) {
       e.preventDefault();
       
@@ -141,25 +167,36 @@
         correo: form.correo.value.trim()
       };
       
-      // Añadir contraseña solo si se ha proporcionado
-      if (form.contrasena.value) {
-        data.contrasena = form.contrasena.value;
-      }
+      // Añadir contraseña siempre, incluso si está vacía
+      // Esto es importante ya que el backend podría esperar este campo
+      data.contrasena = form.contrasena.value;
       
       // Si es edición, añadir el ID
       if (idPersona) {
         data.idPersona = parseInt(idPersona);
       }
+      console.log('Datos del formulario:', data);
+      // Mostrar datos que se enviarán (para debug)
+      mostrarDebug(data);
+      
+      const method = idPersona ? 'PUT' : 'POST';
+      console.log(`Enviando solicitud ${method} con datos:`, data);
       
       // Enviar la solicitud al servidor
       fetch('http://localhost:4001/api/usuarios', {
-        method: idPersona ? 'PUT' : 'POST',
+        method: method,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(data)
       })
       .then(res => {
+        // Imprimir headers para debug
+        console.log('Status:', res.status);
+        console.log('Headers:', [...res.headers.entries()]);
+       
+        
         if (res.ok) {
           usuarioModal.hide();
           location.reload();
