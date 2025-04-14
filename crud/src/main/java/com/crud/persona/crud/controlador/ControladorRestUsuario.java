@@ -1,15 +1,24 @@
 package com.crud.persona.crud.controlador;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.persona.crud.modelo.ModeloUsuario;
 import com.crud.persona.crud.repositorios.IRepositorioUsuario;
 import com.crud.persona.crud.servicios.ServicioUsuario;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,4 +63,9 @@ public void eliminarUsuario(@RequestBody ModeloUsuario usuario) {
  public String claveEncriptada(String clave) {
 	   return BCrypt.hashpw(clave, BCrypt.gensalt());
    }
+ 
+ @PostMapping("/autenticar")
+ public boolean autenticarUsuario(@RequestBody ModeloUsuario usuario) {   
+     return this.servicioUsuario.autenticarUsuario(usuario.getCorreo(), usuario.getContrasena());
+}   
 }
