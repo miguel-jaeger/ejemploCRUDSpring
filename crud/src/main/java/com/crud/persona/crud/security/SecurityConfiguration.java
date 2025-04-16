@@ -25,9 +25,10 @@ public class SecurityConfiguration {
 		// @formatter:off
 		http
 				.authorizeHttpRequests((authorize) -> authorize
-						.anyRequest().authenticated() //permitAll() -> colocar para desactivar el security
+						.anyRequest().permitAll() //permitAll() -> colocar para desactivar el security
+						//authenticated()
 				)
-				.httpBasic(withDefaults()) //comentar para desactivar el security
+				//.httpBasic(withDefaults()) //comentar para desactivar el security
 				.formLogin(withDefaults()); //comentar para desactivar el security
 		// @formatter:on
 		return http.build();
