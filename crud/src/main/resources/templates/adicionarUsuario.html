@@ -32,6 +32,15 @@
                 <label for="contrasena" class="form-label">Contraseña</label>
                 <input type="password" th:field="*{contrasena}" class="form-control" id="contrasena" placeholder="********" required>
             </div>
+
+            <!-- Campo Rol -->
+            <div class="col-12">
+                <label for="rol" class="form-label">Rol</label>
+                <select th:field="*{rol.idRol}" class="form-select" id="rol" required>
+                    <option value="" disabled selected>Selecciona un rol</option>
+                    <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.descripcion}"></option>
+                </select>
+            </div>
     
             <div class="col-12 mt-3">
                 <button type="submit" class="btn btn-primary">Guardar Usuario</button>
