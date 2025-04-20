@@ -1,22 +1,31 @@
 package com.crud.persona.crud.controlador;
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.crud.persona.crud.modelo.ModeloRol;
 import com.crud.persona.crud.modelo.ModeloUsuario;
+import com.crud.persona.crud.servicios.ServicioRol;
 import com.crud.persona.crud.servicios.ServicioUsuario;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
+
 public class ControladorUsuario<Usuario> {
     @Autowired
     private ServicioUsuario servicioUsuario;
+    @Autowired
+    private ServicioRol servicioRol;
     // redirecciona al home de la app
     @GetMapping("/")
     public String redirectToUsuarios() {
@@ -33,6 +42,9 @@ public class ControladorUsuario<Usuario> {
     public String mostrarFormularioAdicionar(Model modelo) {
         ModeloUsuario usuario = new ModeloUsuario();
         modelo.addAttribute("usuario", usuario);
+         // Usa la instancia inyectada para llamar al método
+         List<ModeloRol> roles = servicioRol.listarRoles();
+         modelo.addAttribute("roles", roles);
         return "adicionarUsuario";
     }
 
@@ -46,25 +58,43 @@ public class ControladorUsuario<Usuario> {
    
    @GetMapping("usuarios/editar/{id}")
    public String mostrarFormularioEditar(@RequestParam Long idPersona, Model modelo) {
-       modelo.addAttribute("usuario", servicioUsuario.obtenerUsuarioPorId(idPersona));
-       return "editarUsuario";
+     
+       // Obtener el usuario existente de la base de datos
+       ModeloUsuario usuario = servicioUsuario.obtenerUsuarioPorId(idPersona);
+       modelo.addAttribute("usuario", usuario);
+
+       // Obtener la lista de roles desde la base de datos
+       List<ModeloRol> roles = servicioRol.listarRoles();
+       modelo.addAttribute("roles", roles);
+
+       return "editarUsuario"; // Nombre de la vista Thymeleaf
    }
  
-   @PostMapping("usuarios/{id}")
-   public String actualizarUsuario(@RequestParam Long idPersona, @ModelAttribute("usuario") ModeloUsuario usuario) {
-       // Obtener el usuario existente de la base de datos
-       ModeloUsuario usuarioExistente = servicioUsuario.obtenerUsuarioPorId(idPersona);
-       // Actualizar los campos del usuario existente con los nuevos valores
-      usuarioExistente.setIdPersona(idPersona);
-       usuarioExistente.setNombre(usuario.getNombre());
-       usuarioExistente.setApellido(usuario.getApellido());
-       usuarioExistente.setCorreo(usuario.getCorreo());
-      // usuarioExistente.setContrasena(usuario.getContrasena());
-       // Guardar el usuario actualizado en la base de datos
-       servicioUsuario.actualizarUsuario(usuarioExistente);
-       return "redirect:/usuarios";
-    
-   }
+@PostMapping("usuarios/{id}")
+public String actualizarUsuario(@PathVariable("id") Long idPersona, @ModelAttribute("usuario") ModeloUsuario usuario) {
+    // Obtener el usuario existente de la base de datos
+    ModeloUsuario usuarioExistente = servicioUsuario.obtenerUsuarioPorId(idPersona);
+
+    if (usuarioExistente == null) {
+        throw new RuntimeException("Usuario no encontrado");
+    }
+
+    // Actualizar los campos del usuario existente con los nuevos valores
+    usuarioExistente.setNombre(usuario.getNombre());
+    usuarioExistente.setApellido(usuario.getApellido());
+    usuarioExistente.setCorreo(usuario.getCorreo());
+
+    // Si estás actualizando el rol, asegúrate de que esté correctamente vinculado
+    if (usuario.getRol() != null && usuario.getRol().getIdRol() != null) {
+        ModeloRol rol = servicioRol.obtenerRolPorId(usuario.getRol().getIdRol());
+        usuarioExistente.setRol(rol);
+    }
+
+    // Guardar el usuario actualizado en la base de datos
+    servicioUsuario.actualizarUsuario(usuarioExistente);
+
+    return "redirect:/usuarios";
+}
 
    @GetMapping("usuarios/eliminar/{id}")
    public String eliminarUsuario(@RequestParam Long idPersona) {
