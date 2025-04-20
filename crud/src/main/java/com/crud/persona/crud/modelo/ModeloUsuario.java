@@ -1,31 +1,46 @@
 package com.crud.persona.crud.modelo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "usuarios")
 public class ModeloUsuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPersona;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "apellido")
-    private String apellido;  
+    @Column(name = "apellido", nullable = false, length = 100)
+    private String apellido;
 
-    @Column(name = "correo", unique=true)
+    @Column(name = "correo", nullable = false, unique = true, length = 255)
     private String correo;
-    
-    @Column(name = "contrasena")
+
+    @Column(name = "contrasena", nullable = false, length = 255)
     private String contrasena;
 
+    // Relación muchos a uno con Rol
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rol_id", nullable = false)
+    private ModeloRol rol;
+
+    // Constructor vacío
+    public ModeloUsuario() {
+    }
+
+    // Constructor con parámetros
+    public ModeloUsuario(String nombre, String apellido, String correo, String contrasena, ModeloRol rol) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.rol = rol;
+    }
+
+    // Getters y Setters
     public Long getIdPersona() {
         return idPersona;
     }
@@ -66,13 +81,17 @@ public class ModeloUsuario {
         this.contrasena = contrasena;
     }
 
-	@Override
-	public String toString() {
-		return "ModeloUsuario [idPersona=" + idPersona + ", nombre=" + nombre + ", apellido=" + apellido + ", correo="
-				+ correo + ", contrasena=" + contrasena + "]";
-	}
+    public ModeloRol getRol() {
+        return rol;
+    }
 
-       
+    public void setRol(ModeloRol rol) {
+        this.rol = rol;
+    }
 
-
+    @Override
+    public String toString() {
+        return "ModeloUsuario [idPersona=" + idPersona + ", nombre=" + nombre + ", apellido=" + apellido + ", correo="
+                + correo + ", contrasena=" + contrasena + ", rol=" + rol + "]";
+    }
 }
