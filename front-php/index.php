@@ -19,6 +19,7 @@
           <th>Nombre</th>
           <th>Apellido</th>
           <th>Correo</th>
+          <th>Rol</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -34,25 +35,22 @@
                     <td><?php echo ($index + 1); ?></td>
                     <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
                     <td><?php echo htmlspecialchars($usuario['apellido']); ?></td>
-                    <td><?php echo htmlspecialchars($usuario['correo']); ?></td>                  
+                    <td><?php echo htmlspecialchars($usuario['correo']); ?></td>
+                    <td><?php echo htmlspecialchars($usuario['rol']['descripcion'] ?? 'Sin Rol'); ?></td>
                     <td>
-                     <!-- <button class="btn btn-warning btn-sm me-1" onclick='editarUsuario(<?php echo htmlspecialchars(json_encode($usuario)); ?>)'>Editar</button>
-                      <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $usuario['idPersona']; ?>)">Eliminar</button>-->
-<!-- Los botones con iconos utilizando Bootstrap Icons -->
-<button class="btn btn-primary btn-sm me-1" onclick='editarUsuario(<?php echo htmlspecialchars(json_encode($usuario)); ?>)'>
-  <i class="bi bi-pencil-square"></i> Editar
-</button>
-<button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $usuario['idPersona']; ?>)">
-  <i class="bi bi-trash"></i> Eliminar
-</button>
-
+                      <button class="btn btn-primary btn-sm me-1" onclick='editarUsuario(<?php echo htmlspecialchars(json_encode($usuario)); ?>)'>
+                        <i class="bi bi-pencil-square"></i> Editar
+                      </button>
+                      <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $usuario['idPersona']; ?>)">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
                     </td>
                   </tr>
                 <?php
               }
           } else {
         ?>
-          <tr><td colspan="5">No se encontraron usuarios.</td></tr>
+          <tr><td colspan="6">No se encontraron usuarios.</td></tr>
         <?php
           }
         ?>
@@ -96,10 +94,26 @@
               <input type="password" class="form-control" id="contrasena" name="contrasena">
               <small class="form-text text-muted" id="passwordHint"></small>
             </div>
+            <div class="mb-3">
+              <label for="rol" class="form-label">Rol</label>
+              <select class="form-select" id="rol" name="rol.idRol" required>
+                <option value="" disabled selected>Selecciona un rol</option>
+                <?php
+                  $jsonRoles = file_get_contents('http://localhost:4001/api/roles');
+                  $roles = json_decode($jsonRoles, true);
+                  if ($roles && is_array($roles)) {
+                      foreach ($roles as $rol) {
+                          echo "<option value='" . htmlspecialchars($rol['idRol']) . "'>" . htmlspecialchars($rol['descripcion']) . "</option>";
+                      }
+                  }
+                ?>
+              </select>
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="btnSave">Guardar</button>
+       <button type="submit" class="btn btn-primary" id="btnSave">Guardar</button>     
+       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+     
           </div>
         </form>
       </div>
@@ -124,6 +138,7 @@
       document.getElementById('modalTitle').textContent = 'Nuevo Usuario';
       document.getElementById('contrasena').required = true;
       document.getElementById('passwordHint').textContent = 'La contraseña es obligatoria para nuevos usuarios';
+      document.getElementById('rol').value = ''; // Limpiar selección de rol
     }
 
     function editarUsuario(usuario) {
@@ -141,6 +156,9 @@
         document.getElementById('contrasena').required = false;
         document.getElementById('modalTitle').textContent = 'Editar Usuario';
         document.getElementById('passwordHint').textContent = 'Dejar en blanco para mantener la contraseña actual';
+        
+        // Seleccionar el rol actual del usuario
+        document.getElementById('rol').value = usuario.rol?.idRol || '';
         
         usuarioModal.show();
       } catch (error) {
@@ -164,12 +182,12 @@
       const data = {
         nombre: form.nombre.value.trim(),
         apellido: form.apellido.value.trim(),
-        correo: form.correo.value.trim()
+        correo: form.correo.value.trim(),
+        contrasena: form.contrasena.value,
+        rol: {
+          idRol: parseInt(form['rol.idRol'].value)
+        }
       };
-      
-      // Añadir contraseña siempre, incluso si está vacía
-      // Esto es importante ya que el backend podría esperar este campo
-      data.contrasena = form.contrasena.value;
       
       // Si es edición, añadir el ID
       if (idPersona) {
