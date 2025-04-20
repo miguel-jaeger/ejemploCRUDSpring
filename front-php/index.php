@@ -111,15 +111,9 @@
             </div>
           </div>
           <div class="modal-footer">
-<<<<<<< HEAD
        <button type="submit" class="btn btn-primary" id="btnSave">Guardar</button>     
        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
      
-=======
-            <button type="submit" class="btn btn-primary" id="btnSave">Guardar</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-
->>>>>>> 41d2bd9eb9dcffbb5411dfc3cc1aac8c80cfedef
           </div>
         </form>
       </div>
