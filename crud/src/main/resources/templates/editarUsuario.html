@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>editarUsuario usuario</title>
+    <title>Editar Usuario</title>
      <!-- Bootstrap CSS -->
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="mb-4">Editar de Usuario</h2>
+        <h2 class="mb-4">Editar Usuario</h2>
         
-        <form th:action="@{/usuarios/{id}(idPersona=${usuario.idPersona})}" th:object="${usuario}" method="post" class="row g-3">
+        <form th:action="@{/usuarios/{id}(id=${usuario.idPersona})}" th:object="${usuario}" method="post" class="row g-3">
 
             <div class="col-md-6">
                 <label for="nombre" class="form-label">Nombre</label>
@@ -27,13 +27,16 @@
                 <label for="correo" class="form-label">Correo electrónico</label>
                 <input type="email" th:field="*{correo}" class="form-control" id="correo" placeholder="usuario@ejemplo.com" required>
             </div>
-    <!--
+
+            <!-- Campo Rol -->
             <div class="col-12">
-                <label for="contrasena" class="form-label">Contraseña</label>
-                <input type="password" th:field="*{contrasena}" class="form-control" id="contrasena" placeholder="********" required>
+                <label for="rol" class="form-label">Rol</label>
+                <select th:field="*{rol.idRol}" class="form-select" id="rol" required>
+                    <option value="" disabled selected>Selecciona un rol</option>
+                    <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.descripcion}"></option>
+                </select>
             </div>
-        -->
-    
+
             <div class="col-12 mt-3">
                 <button type="submit" class="btn btn-primary">Guardar Usuario</button>
                 <a th:href="@{/usuarios}" class="btn btn-secondary">Cancelar</a>
