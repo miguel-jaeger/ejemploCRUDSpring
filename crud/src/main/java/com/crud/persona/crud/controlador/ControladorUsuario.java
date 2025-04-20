@@ -16,6 +16,10 @@ import com.crud.persona.crud.modelo.ModeloRol;
 import com.crud.persona.crud.modelo.ModeloUsuario;
 import com.crud.persona.crud.servicios.ServicioRol;
 import com.crud.persona.crud.servicios.ServicioUsuario;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -116,16 +120,35 @@ public String actualizarUsuario(@PathVariable("id") Long idPersona, @ModelAttrib
    }
    
    @PostMapping("usuarios/autenticarUsuario")
-   public String autenticarUsuario(@ModelAttribute("usuario") ModeloUsuario usuario) {
-       boolean valida = servicioUsuario.autenticarUsuario(usuario.getCorreo(), usuario.getContrasena());
+   public String autenticarUsuario(@ModelAttribute("usuario") ModeloUsuario usuario, HttpServletRequest request
+		   ) {
+	   ModeloUsuario usuariovalida = servicioUsuario.autenticarUsuario(usuario.getCorreo(), usuario.getContrasena());
        String redirect = "autenticar404";
-       if(valida) redirect = "usuarios";
+       if(usuariovalida!=null) { 
+    	   //agregar session
+    	   HttpSession session = request.getSession();
+    	   session.setAttribute("usuario", usuariovalida); // guardar en la variable de sesion "username" el objeto usuariovalida
+    	   redirect = "usuarios";
+       }
        return "redirect:/"+redirect;
    }
    
    @GetMapping("/autenticar404")
    public String autenticarError(Model modelo) {
        return "autenticar404";
+   }
+   
+   @GetMapping("/obtenerSession")
+   public String getData(HttpSession session) {
+       String username = (String) session.getAttribute("username");
+       return "Hello, " + username;
+   }
+   
+   @GetMapping("/cerrarSession")
+   public String logout(HttpSession session) {
+       // Invalidate the session
+       session.invalidate();
+       return "logged_out";
    }
 
 }

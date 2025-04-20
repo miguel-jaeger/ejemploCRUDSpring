@@ -1,17 +1,26 @@
 package com.crud.persona.crud.modelo;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "roles")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ModeloRol {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_rol")
     private Long idRol;
 
     @Column(name = "descripcion", nullable = false, length = 255)
     private String descripcion;
+    
+    @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
+    private List<ModeloUsuario> usuariosCollection;
 
     // Constructor vacío
     public ModeloRol() {
@@ -37,6 +46,14 @@ public class ModeloRol {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+    
+    public List<ModeloUsuario> getUsuariosCollection() {
+        return usuariosCollection;
+    }
+
+    public void setUsuariosCollection(List<ModeloUsuario> usuariosCollection) {
+        this.usuariosCollection = usuariosCollection;
     }
 
     @Override

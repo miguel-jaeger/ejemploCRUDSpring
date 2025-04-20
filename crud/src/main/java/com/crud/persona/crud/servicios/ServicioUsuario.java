@@ -43,13 +43,14 @@ public class ServicioUsuario {
 		.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 	}
 	
-	public boolean autenticarUsuario(String nombreUsuario, String password) {
+	public ModeloUsuario autenticarUsuario(String nombreUsuario, String password) {
         ModeloUsuario usuarioOpt = repositorioUsuario.findByCorreo(nombreUsuario);
         //password -> clave del formulario
         // usuarioOpt.getContrasena() -> clave de base de datos
+        boolean valida = false;
         if (usuarioOpt!=null) {
-            return BCrypt.checkpw(password, usuarioOpt.getContrasena());
+        	valida = BCrypt.checkpw(password, usuarioOpt.getContrasena());
         }
-        return false;
+        return valida?usuarioOpt:null;
     }
 }

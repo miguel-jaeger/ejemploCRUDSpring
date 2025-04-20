@@ -15,10 +15,12 @@ import com.crud.persona.crud.modelo.ModeloUsuario;
 import com.crud.persona.crud.servicios.ServicioRol;
 import com.crud.persona.crud.servicios.ServicioUsuario;
 
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -112,5 +114,11 @@ public class ControladorRestUsuario {
     // Método para encriptar contraseñas
     private String claveEncriptada(String clave) {
         return BCrypt.hashpw(clave, BCrypt.gensalt());
+    }
+    
+    @PostMapping("/autenticarRest")
+    public ResponseEntity<ModeloUsuario> autenticarUsuario(@RequestBody ModeloUsuario usuario) {
+ 	   ModeloUsuario usuariovalida = servicioUsuario.autenticarUsuario(usuario.getCorreo(), usuario.getContrasena());
+       return ResponseEntity.ok(usuariovalida);
     }
 }

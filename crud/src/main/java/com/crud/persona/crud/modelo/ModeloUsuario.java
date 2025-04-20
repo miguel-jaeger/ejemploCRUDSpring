@@ -26,8 +26,8 @@ public class ModeloUsuario {
 
     // Relación muchos a uno con Rol
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rol_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "rol_id", referencedColumnName = "id_rol", nullable = false)
+    @JsonIgnoreProperties({"usuariosCollection"})
     private ModeloRol rol;
 
     // Constructor vacío
