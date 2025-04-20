@@ -38,7 +38,9 @@ public class ServicioUsuario {
 	}
 
 	public ModeloUsuario obtenerUsuarioPorId(Long id) {
-		return repositorioUsuario.findById(id).orElse(null);
+		//return repositorioUsuario.findById(id).orElse(null);
+		return repositorioUsuario.findByIdWithRol(id)
+		.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 	}
 	
 	public boolean autenticarUsuario(String nombreUsuario, String password) {
