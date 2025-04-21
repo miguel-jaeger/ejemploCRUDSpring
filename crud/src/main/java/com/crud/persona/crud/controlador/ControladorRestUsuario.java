@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -116,9 +117,15 @@ public class ControladorRestUsuario {
         return BCrypt.hashpw(clave, BCrypt.gensalt());
     }
     
-    @PostMapping("/autenticarRest")
-    public ResponseEntity<ModeloUsuario> autenticarUsuario(@RequestBody ModeloUsuario usuario) {
+    @PostMapping("/autenticar")
+    public ResponseEntity<?> autenticarUsuario(@RequestBody ModeloUsuario usuario) {
  	   ModeloUsuario usuariovalida = servicioUsuario.autenticarUsuario(usuario.getCorreo(), usuario.getContrasena());
-       return ResponseEntity.ok(usuariovalida);
+       
+       if(usuariovalida!= null) {
+           return ResponseEntity.ok(usuariovalida); // Usuario autenticado correctamente
+       } else {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales invalidas"); // Credenciales inválidas
+       }
+       
     }
 }
